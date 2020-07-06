@@ -22,7 +22,7 @@ After git clone, follow these:
 
   6) Go to 127.0.0.1:8000
 
-  It's the "Django-Shop" website, which is intented to show you.
+  It's the "Django-Shop" website, which is intended to show you.
 
 This Django-Shop consists of three apps: member, product, and order.
 
