@@ -44,8 +44,7 @@ Also, a class variable "queryset" is used instead of "model".
 It doesn't matter to use "model" here, but one can apply conditions on look-up table with "queryset".
 
 In product.forms, note the comment-out part.  
-This shows it's better to write code, which is implemented after successful validation, in form_valid() method in views.py  
-rather than in clean() method in forms.py.
+This shows it's better to write code, which is implemented after successful validation, in form_valid() method in views.py rather than in clean() method in forms.py.
 
 In product app, DRF(Django Rest Framework) is used in serializers.py and views.py.  
 It's a well-known trend to separate the development into two parts: frontend and backend.  
