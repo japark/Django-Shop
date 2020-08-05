@@ -61,7 +61,7 @@ In order.views, note
 4. Use of get_queryset() method.
 
 
-Updates :
+Updates (2020-08-05) :
 
 1) "cart" app is created.  
 2) OrderCreateForm is added in order/forms.py.  
