@@ -8,7 +8,7 @@
 		<table class="table table-light">
 			<thead class="thead-light">
 				<tr>
-					<th scope="col">#</th>
+					<th scope="col">주문번호</th>
 					<th scope="col">상품명</th>
 					<th scope="col">수량</th>
 					<th scope="col">주문날짜</th>
@@ -16,15 +16,25 @@
 			</thead>
 			<tbody class="text-dark">
 				{% for order in object_list %}
-				<tr>
-					<td scope="row">{{ order.id }}</td>
-					<td>{{ order.product }}</td>
-					<td>{{ order.quantity|intcomma }} 개</td>
-					<td>{{ order.registered_dttm|date:'Y-m-d H:i' }}</td>
-				</tr>
+					{% for orderitem in order.orderitem_set.all %}
+					<tr>
+						<td scope="row">{{ order.id }}</td>
+						<td>{{ orderitem.product.name }}</td>
+						<td>{{ orderitem.quantity|intcomma }} 개</td>
+						<td>{{ order.registered_dttm|date:'Y-m-d H:i' }}</td>
+					</tr>
+					{% endfor%}
 				{% endfor%}
 			</tbody>
 		</table>
+	</div>
+</div>
+<div class="row mt-5">
+	<div class="col-12">
+		<div class="text-right">
+	        <a href='/' class="btn btn-secondary">메인으로</a>
+	        <a href='/product/' class="btn btn-secondary">목록으로</a>
+	    </div>
 	</div>
 </div>
 {% endblock %}

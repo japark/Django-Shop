@@ -5,12 +5,16 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import generics
 from rest_framework import mixins
-from .serializers import ProductSerializer
+
+from cart.forms import AddProductForm
 
 from member.decorators import admin_required
-from .models import Product
-from .forms import RegisterForm
-from order.forms import RegisterForm as OrderForm
+
+# from order.forms import RegisterForm as OrderForm
+
+from product.models import Product
+from product.forms import RegisterForm
+from product.serializers import ProductSerializer
 
 # Create your views here.
 
@@ -19,6 +23,7 @@ class ProductListAPI(generics.GenericAPIView, mixins.ListModelMixin):
 	serializer_class = ProductSerializer
 
 	def get_queryset(self):
+		print(self.request.query_params.get('name'))
 		return Product.objects.all().order_by('-id')
 
 	def get(self, request, *args, **kwargs):
@@ -65,5 +70,6 @@ class ProductDetail(DetailView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['form'] = OrderForm(self.request)
+		# context['form'] = OrderForm(self.request)
+		context['form'] = AddProductForm()
 		return context

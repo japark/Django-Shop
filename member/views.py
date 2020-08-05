@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.contrib.auth.hashers import make_password
-from .forms import RegisterForm, LoginForm
-from .models import Member
+
+from cart.cart import Cart
+from member.forms import RegisterForm, LoginForm
+from member.models import Member
 
 # Create your views here.
 
@@ -39,6 +41,8 @@ class LoginView(FormView):
 
 
 def logout(request):
+	cart = Cart(request)
+	cart.clear()
 	if 'user' in request.session:
 		del request.session['user']
 	return redirect('/')

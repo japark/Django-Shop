@@ -1,8 +1,15 @@
 from django import forms
-from .models import Order
-from product.models import Product
-from member.models import Member
 # from django.db import transaction
+
+from member.models import Member
+from order.models import Order
+from product.models import Product
+
+
+class OrderCreateForm(forms.Form):
+    email = forms.CharField(
+		label='이메일'
+	)
 
 
 class RegisterForm(forms.Form):

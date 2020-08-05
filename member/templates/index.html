@@ -6,16 +6,19 @@
 </div>
 <div class="row mt-5">
 	{% if email %}
-	<div class="col-12">
-		<a href="/logout/" class="btn btn-block btn-primary">로그아웃</a>
-	</div>
+		<div class="col-6">
+			<a href="/logout/" class="btn btn-block btn-primary">로그아웃</a>
+		</div>
+		<div class="col-6">
+			<a href="/cart/" class="btn btn-block btn-warning">장바구니</a>
+		</div>
 	{% else %}
-	<div class="col-6">
-		<a href="/login/" class="btn btn-block btn-primary">로그인</a>
-	</div>
-	<div class="col-6">
-		<a href="/register/" class="btn btn-block btn-primary">회원가입</a>
-	</div>
+		<div class="col-6">
+			<a href="/login/" class="btn btn-block btn-primary">로그인</a>
+		</div>
+		<div class="col-6">
+			<a href="/register/" class="btn btn-block btn-primary">회원가입</a>
+		</div>
 	{% endif %}
 </div>
 <div class="row mt-5">
@@ -32,6 +35,12 @@
 <div class="row mt-5">
 	<div class="col-12 text-center">
 		<p>** 상품추가는 회원가입된 사용자의 level 이 사이트 운영자에 의해 "admin" 으로 설정되어야 이용할 수 있습니다. **</p>
+	</div>
+</div>
+<div class="mt-5">** 다음은 심화프로젝트로 만든 주문검색 기능입니다. **</div>
+<div class="row mt-2">
+	<div class="col-12">
+		<a href="/order/search/" class="btn btn-block btn-danger">주문검색하기</a>
 	</div>
 </div>
 {% endblock %}

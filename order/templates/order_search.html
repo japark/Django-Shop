@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block header %}
+<script type="text/javascript">
+$(document).ready(function () {
+	$.ajaxSetup({ 
+		beforeSend: function(xhr, settings) {
+			function getCookie(name) {
+				var cookieValue = null;
+				if (document.cookie && document.cookie != '') {
+					var cookies = document.cookie.split(';');
+					for (var i = 0; i < cookies.length; i++) {
+						var cookie = jQuery.trim(cookies[i]);
+						if (cookie.substring(0, name.length + 1) == (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+			if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+				xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			}
+		}
+	});
+
+	function order_search (
+		page='',
+		ordering='',
+		date_from='',
+		date_until='',
+		register_date='',
+		total_price_from='',
+		total_price_to='',
+		product='',
+		quantity='',
+		contains='',
+		price_from='',
+		price_to='',
+		total_count='',
+		domain='',
+		join_from='',
+		join_until='') {
+		querystring = `?date_from=${date_from}&date_until=${date_until}&register_date=${register_date}&total_price_from=${total_price_from}&total_price_to=${total_price_to}&product=${product}&quantity=${quantity}&contains=${contains}&price_from=${price_from}&price_to=${price_to}&total_count=${total_count}&domain=${domain}&join_from=${join_from}&join_until=${join_until}`
+		$.ajax({
+			type: 'GET',
+			url: '/api/order/search/' + querystring,
+			dataType: 'json',
+			success: function (data) {
+				let tmp_data = [];
+				for(let i = 0; i < data.length; i++) {
+					tmp_data.push(data[i]['id'])
+				}
+				tmp_data = tmp_data.join(',')
+				$.ajax({
+					type: 'POST',
+					data: {'data':tmp_data, 'page':page, 'ordering':ordering},
+					url: '/order/search/',
+					success: function (result) {
+						const start = '<div id="result">'
+						const end = '</body>'
+						const a = result.indexOf(start);
+						const aa = result.indexOf(start, a+1);
+						const b = result.indexOf(end);
+						const bb = result.indexOf(end, b+1);
+						$('#display-section').html(result.slice(aa,bb));
+						btn_settings();
+					}
+				})
+			}
+		})
+	}
+
+	function btn_settings () {
+		$('#all-reset-btn').on('click', function () {
+			$('input[name=ordering]:checked').prop('checked', false)
+			$('#date_from').val('');
+			$('#date_until').val('');
+			$('#date-string').html('');
+			$('#total_price_from').val('');
+			$('#total_price_to').val('');
+			$('#product-string').html('');
+			$('#quantity').val('');
+			$('#contains').val('');
+			$('#price_from').val('');
+			$('#price_to').val('');
+			$('#total_count').val('');
+			$('#domain').val('');
+			$('#join_from').val('');
+			$('#join_until').val('');
+		})
+
+		$('#search-btn').on('click', function () {
+			order_search(
+				page='',
+				ordering=$('input[name=ordering]:checked').val(),
+				date_from=$('#date_from').val(),
+				date_until=$('#date_until').val(),
+				register_date=$('#date-string').html(),
+				total_price_from=$('#total_price_from').val(),
+				total_price_to=$('#total_price_to').val(),
+				product=$('#product-string').html(),
+				quantity=$('#quantity').val(),
+				contains=$('#contains').val(),
+				price_from=$('#price_from').val(),
+				price_to=$('#price_to').val(),
+				total_count=$('#total_count').val(),
+				domain=$('#domain').val(),
+				join_from=$('#join_from').val(),
+				join_until=$('#join_until').val()
+			);
+		})
+
+		$('#date-add-btn').on('click', function () {
+			let dates_str = $('#date-string').html();
+			const date = $('#register_date').val();
+			if (date) {
+				if (dates_str) dates_str += ',';
+				dates_str += date;
+				$('#date-string').html(dates_str);
+				$('#register_date').val('');
+			}		
+		})
+		$('#date-reset-btn').on('click', function () {
+			$('#date-string').html('');
+		})
+
+		$('#product-add-btn').on('click', function () {
+			let dates_str = $('#product-string').html();
+			const date = $('#product').val();
+			if (date) {
+				if (dates_str) dates_str += ',';
+				dates_str += date;
+				$('#product-string').html(dates_str);
+				$('#product').val('');
+			}		
+		})
+		$('#product-reset-btn').on('click', function () {
+			$('#product-string').html('');
+		})
+
+		$('a.go-prev').on('click', function () {
+			let page = $('a.go-prev').data('page');
+			order_search (
+				page=page,
+				ordering=$('input[name=ordering]:checked').val(),
+				date_from=$('#date_from').val(),
+				date_until=$('#date_until').val(),
+				register_date=$('#date-string').html(),
+				total_price_from=$('#total_price_from').val(),
+				total_price_to=$('#total_price_to').val(),
+				product=$('#product-string').html(),
+				quantity=$('#quantity').val(),
+				contains=$('#contains').val(),
+				price_from=$('#price_from').val(),
+				price_to=$('#price_to').val(),
+				total_count=$('#total_count').val(),
+				domain=$('#domain').val(),
+				join_from=$('#join_from').val(),
+				join_until=$('#join_until').val())
+		})
+		$('a.go-next').on('click', function () {
+			let page = $('a.go-next').data('page');
+			order_search (
+				page=page,
+				ordering=$('input[name=ordering]:checked').val(),
+				date_from=$('#date_from').val(),
+				date_until=$('#date_until').val(),
+				register_date=$('#date-string').html(),
+				total_price_from=$('#total_price_from').val(),
+				total_price_to=$('#total_price_to').val(),
+				product=$('#product-string').html(),
+				quantity=$('#quantity').val(),
+				contains=$('#contains').val(),
+				price_from=$('#price_from').val(),
+				price_to=$('#price_to').val(),
+				total_count=$('#total_count').val(),
+				domain=$('#domain').val(),
+				join_from=$('#join_from').val(),
+				join_until=$('#join_until').val())
+		})
+	}
+	btn_settings();
+})
+
+
+</script>
+{% endblock %}
+
+{% block contents %}
+<h2 class="mt-5">주문 검색하기</h2>
+<div class="mt-3"><a href="/" class="btn btn-warning">메인으로</a></div>
+<div class="row mt-5">
+	<div class="col-12">
+		<div>
+			<label>주문날짜 :</label>
+			<input type="date" id="date_from" default=""> 부터
+			<input type="date" id="date_until" default=""> 까지
+		</div>
+		<hr>
+		<div>
+			<label>특정날짜 :</label>
+			<input type="date" id="register_date" default="">
+			<button type="button" id="date-add-btn" class="btn btn-dark">추가</button>
+			<button type="button" id="date-reset-btn" class="btn btn-dark">리셋</button>
+			( 날짜를 선택한 후, 추가 버튼을 눌러줄 것 )
+			<div id="date-string"></div>
+		</div>
+		<hr>
+		<div>
+			<label>주문총액 :</label>
+			<input type="number" id="total_price_from" default="" min="0" step="1">원 부터
+			<input type="number" id="total_price_to" default="" min="0" step="1">원 까지
+		</div>
+		<hr>
+		<div>
+			<label>특정제품번호 :</label>
+			<input type="number" id="product" default="" min="0" step="1">
+			<button type="button" id="product-add-btn" class="btn btn-dark">추가</button>
+			<button type="button" id="product-reset-btn" class="btn btn-dark">리셋</button>
+			( 제품 번호를 입력한 후, 추가 버튼을 눌러줄 것 )
+			<div id="product-string"></div>
+		</div>
+		<hr>
+		<div>
+			<label>제품개수 :</label>
+			<input type="number" id="quantity" default="">개 (특정개수만큼 주문한 제품이 포함된 주문)
+		</div>
+		<hr>
+		<div>
+			<label>제목에 포함된 특정문자열 :</label>
+			<input type="text" id="contains" default="">
+		</div>
+		<hr>
+		<div>
+			<label>제품 당 가격 :</label>
+			<input type="number" id="price_from" default="" min="0" step="1">원 부터
+			<input type="number" id="price_to" default="" min="0" step="1">원 까지
+			(다음 가격에 해당하는 제품이 포함된 주문)
+		</div>
+		<hr>
+		<div>
+			<label>주문 제품 총 개수 :</label>
+			<input type="number" id="total_count" default="">
+		</div>
+		<hr>
+		<div>
+			<label>주문자 이메일 도메인 정보 :</label>
+			<input type="text" id="domain" default="" placeholder="test.com">
+			( 호스트명을 입력하세요. )
+		</div>
+		<hr>
+		<div>
+			<label>주문자 가입기간 :</label>
+			<input type="date" id="join_from" default=""> 부터
+			<input type="date" id="join_until" default=""> 까지
+		</div>
+		<hr>
+		<div>
+			<label><strong>정렬조건</strong> : </label>
+			<p style="color:red;">선택하지 않을 경우, 주문번호의 역순으로 정렬됩니다.</p>
+			<input type="radio" id="register_date_order" name="ordering" value="registered_dttm">
+			<label for="register_date_order">주문일자순</label>
+			<input type="radio" id="-register_date_order" name="ordering" value="-registered_dttm">
+			<label for="-register_date_order">주문일자역순</label>
+			<input type="radio" id="total_price" name="ordering" value="total_price">
+			<label for="total_price">주문금액순</label>
+			<input type="radio" id="-total_price" name="ordering" value="-total_price">
+			<label for="-total_price">주문금액역순</label><br>
+			<input type="radio" id="variety" name="ordering" value="variety">
+			<label for="variety">주문제품가짓수순</label>
+			<input type="radio" id="-variety" name="ordering" value="-variety">
+			<label for="-variety">주문제품가짓수역순</label>
+			<input type="radio" id="total_count_order" name="ordering" value="total_count">
+			<label for="total_count_order">주문제품갯수총합순</label>
+			<input type="radio" id="-total_count_order" name="ordering" value="-total_count">
+			<label for="-total_count_order">주문제품갯수총합역순</label><br>
+			<input type="radio" id="join_date" name="ordering" value="user__registered_dttm">
+			<label for="join_date">이용자가입일순</label>
+			<input type="radio" id="-join_date" name="ordering" value="-user__registered_dttm">
+			<label for="-join_date">이용자가입일역순</label>
+		</div>
+		<div class="mt-2 text-right">
+			<button type="button" id="all-reset-btn" class="btn btn-info mr-4">조건리셋</button>
+			<button type="button" id="search-btn" class="btn btn-info">검색/정렬</button>
+		</div>
+
+	</div>
+</div>
+<div id="display-section">
+	<div id="result">
+		<div class="row mt-5 mb-5">
+			<div class="col-12">
+				<table class="table table-light">
+					<thead class="thead-light">
+						<tr>
+							<th class="text-center">주문번호</th>
+							<th class="text-center">주문자</th>
+							<th class="text-center">주문날짜</th>
+							<th class="text-center">주문상세</th>
+						</tr>
+					</thead>
+					<tbody class="text-dark">
+						{% for order in object_list %}
+						<tr>
+							<td class="text-center"><strong>{{ order.id }}</strong></td>
+							<td class="text-center">{{ order.user }}</td>
+							<td class="text-center">{{ order.registered_dttm|date:'Y-m-d H:i' }}</td>
+							<td>
+								{% for detail in order.orderitem_set.all %}
+									<div>{{ detail.product }} {{ detail.price|intcomma }}원 {{ detail.quantity }}개</div>
+								{% endfor %}
+								<hr>
+								<div>주문상품 총 갯수 : <strong>{{ order.total_count }}</strong> 개</div>
+								<div>총 주문금액 : <strong>{{ order.total_price }}</strong> 원</div>
+							</td>
+						</tr>
+						{% endfor%}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row mt-2 mb-5">
+			<div class="col-12">
+				<nav>
+					<ul class="pagination justify-content-center">
+						{% if object_list.has_previous %}
+						<li class="page-item" style="cursor:pointer;">
+							<a class="page-link go-prev" data-page="{{ object_list.previous_page_number }}">이전으로</a>
+						</li>
+						{% else %}
+						<li class="page-item disabled">
+							<a class="page-link">이전으로</a>
+						</li>
+						{% endif %}
+						
+						<li class="page-item active">
+							<a class="page-link">{{ object_list.number }} / {{ object_list.paginator.num_pages }}</a>
+						</li>
+						{% if object_list.has_next %}
+						<li class="page-item" style="cursor:pointer;">
+							<a class="page-link go-next" data-page="{{ object_list.next_page_number }}">다음으로</a>
+						</li>
+						{% else %}
+						<li class="page-item disabled">
+							<a class="page-link">다음으로</a>
+						</li>
+						{% endif %}
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
