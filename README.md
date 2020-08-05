@@ -69,3 +69,4 @@ Updates (2020-08-05) :
 4) "serializers.py" is created in "order" app.  
 5) In order/views.py, OrderSearchAPI and order_search views are added, and order_create view replaces the previous OrderCreate view.  
 6) order/templates/order_search.html provides UI for search conditions and result display.
+Also, it contains long javascript and jQuery for ajax, which sends various search conditions to the server, gets back the result and shows it.
