@@ -61,6 +61,11 @@ In order.views, note
 4. Use of get_queryset() method.
 
 
+Updates :
 
-
-
+1) "cart" app is created.  
+2) OrderCreateForm is added in order/forms.py.  
+3) Table(in order/models.py) is divided into two: Order and OrderItem.  
+4) "serializers.py" is created in "order" app.  
+5) In order/views.py, OrderSearchAPI and order_search views are added, and order_create view replaces the previous OrderCreate view.  
+6) order/templates/order_search.html provides UI for search conditions and result display.
